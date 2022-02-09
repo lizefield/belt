@@ -1,5 +1,10 @@
 {
-  "queue": {
-    "concurrency": 3
+  "jobs": {
+    "jobSample1": {
+      "concurrency": 3
+    },
+    "jobSample2": {
+      "concurrency": 5
+    }
   }
 }

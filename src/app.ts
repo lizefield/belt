@@ -1,7 +1,7 @@
 import express from 'express';
 const app: express.Express = express();
 
-import q from './jobs/index';
+import { jobSample1, jobSample2 } from './jobs/index';
 
 app.get('/healthcheck', (req: express.Request, res: express.Response) => {
   res.statusCode = 200;
@@ -9,13 +9,18 @@ app.get('/healthcheck', (req: express.Request, res: express.Response) => {
 });
 
 app.get('/', (req: express.Request, res: express.Response) => {
-  const text = 'queue: ' + q.length()
+  const text = 'jobSample1: ' + jobSample1.length() + ', jobSample2: ' + jobSample2.length();
   res.send(text);
 });
 
 app.get('/enqueue', (req: express.Request, res: express.Response) => {
-  for (let i=0;i<10;i++) {
-    q.push({uuid: 'd1', url: 'https://www.example.com', host: 'www.example.com'}, () => {
+  for (let i=0;i<100;i++) {
+    jobSample1.push({uuid: 'd1', url: 'https://www.example.com', host: 'www.example.com'}, () => {
+      console.log('finish d1')
+    })
+  }
+  for (let i=0;i<200;i++) {
+    jobSample2.push({uuid: 'd1', url: 'https://www.example.com', host: 'www.example.com'}, () => {
       console.log('finish d1')
     })
   }
