@@ -1,6 +1,14 @@
+// express setting
 import express from 'express';
 const app: express.Express = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// debug setting
+import Debug from 'debug';
+const debug = Debug('belt:server');
+
+// import job
 import { enqueue, aggregate } from './jobs/index';
 
 app.get('/healthcheck', (req: express.Request, res: express.Response) => {
@@ -8,21 +16,15 @@ app.get('/healthcheck', (req: express.Request, res: express.Response) => {
   res.end('healthy');
 });
 
-app.get('/', (req: express.Request, res: express.Response) => {
+app.get('/aggregate', (req: express.Request, res: express.Response) => {
   const current = aggregate();
   const str = JSON.stringify(current);
   res.send(str);
 });
 
-app.get('/enqueue', (req: express.Request, res: express.Response) => {
-  for (let i=0;i<10;i++) {
-    enqueue({
-      jobname: 'jobSample1',
-      params: {
-        uuid: 'd1', url: 'https://www.example.com', host: 'www.example.com'
-      }
-    });
-  }
+app.post('/enqueue', (req: express.Request, res: express.Response) => {
+  debug(req.body);
+  enqueue(req.body);
   res.statusCode = 200;
   res.end('accepted');
 })

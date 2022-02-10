@@ -10,18 +10,25 @@ for (const job in JOBS) {
 import jobSample1 from './jobSample1';
 import jobSample2 from './jobSample2';
 
+const finishCount = {
+  jobSample1: 0,
+  jobSample2: 0,
+}
+
 export const enqueue = (data: any) => {
   console.log(`[start job] ${JSON.stringify(data)}`);
   switch (data.jobname) {
     case 'jobSample1':
       jobSample1.push(data.params, () => {
-        console.log(`[finish job] ${JSON.stringify(data)}`)
-      })
+        console.log(`[finish job] ${JSON.stringify(data)}`);
+        finishCount['jobSample1']++;
+      });
       break;
     case 'jobSample2':
       jobSample2.push(data.params, () => {
-        console.log(`[finish job] ${JSON.stringify(data)}`)
-      })
+        console.log(`[finish job] ${JSON.stringify(data)}`);
+        finishCount['jobSample2']++;
+      });
       break;
     default:
       console.error(`jobname not found - ${JSON.stringify(data)}`);
@@ -29,15 +36,19 @@ export const enqueue = (data: any) => {
 }
 
 export const aggregate = () => {
-  const total = {
+  const data = {
     jobSample1: {
-      concrrent: JOBS['jobSample1'].concurrency,
-      current: jobSample1.length()
+      concurrency: JOBS['jobSample1'].concurrency,
+      length: jobSample1.length(),
+      running: jobSample1.running(),
+      finish: finishCount['jobSample1'],
     },
     jobSample2: {
-      concrrent: JOBS['jobSample2'].concurrency,
-      current: jobSample2.length()
+      concurrency: JOBS['jobSample2'].concurrency,
+      length: jobSample2.length(),
+      running: jobSample2.running(),
+      finish: finishCount['jobSample2'],
     },
-  }
-  return total;
+  };
+  return data;
 }
